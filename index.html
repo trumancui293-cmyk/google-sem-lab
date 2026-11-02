@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Google 搜索广告实训</title>
+  <meta name="description" content="AeroSit Pro 人体工学椅案例。从账户结构、选词、广告、拍卖到 30 天复盘，带练习题。">
+  <meta property="og:title" content="Google 搜索广告实训">
+  <meta property="og:description" content="用一把 $429 的椅子看懂搜索广告：匹配、质量分、拍卖和 CPA。">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://trumancui293-cmyk.github.io/google-sem-lab/">
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --paper: #fff;
+      --ink: #1c2430;
+      --muted: #5c6778;
+      --faint: #8b95a5;
+      --line: #e4e8ef;
+      --blue: #1d5fd0;
+      --blue-soft: #e8f0fc;
+      --green: #0d7a43;
+      --green-soft: #e7f6ee;
+      --red: #c42318;
+      --red-soft: #fdeceb;
+      --amber: #8a5a00;
+      --amber-soft: #fff6e0;
+      --info: #0b4f9c;
+      --info-soft: #e7f1fb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    a { color: var(--blue); }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 28px 20px 64px; }
+    h1 { margin: 0 0 8px; font-size: 30px; line-height: 1.25; font-weight: 650; }
+    h2 { margin: 0; font-size: 20px; line-height: 1.35; }
+    h3 { margin: 0; font-size: 16px; }
+    p { margin: 0; }
+    .lede { color: var(--muted); max-width: 72ch; }
+    .fine { color: var(--faint); font-size: 13px; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 18px 0; }
+    .stat, .card, .callout, .kw, table { background: var(--paper); }
+    .stat { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+    .stat b { display: block; font-size: 22px; line-height: 1.2; }
+    .stat span { color: var(--muted); font-size: 13px; }
+    .stat.good b { color: var(--green); }
+    .stat.warn b { color: var(--amber); }
+    .stat.bad b { color: var(--red); }
+    .stat.info b { color: var(--info); }
+    .steps, .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .pill, .btn {
+      border: 1px solid var(--line);
+      background: var(--paper);
+      border-radius: 999px;
+      padding: 6px 12px;
+      color: var(--ink);
+    }
+    .pill.active, .btn.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .btn.primary:disabled, .btn:disabled { opacity: 0.4; cursor: default; }
+    .split { height: 1px; background: var(--line); margin: 18px 0; }
+    .stack { display: flex; flex-direction: column; gap: 14px; margin-top: 4px; }
+    table { width: 100%; border-collapse: collapse; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+    th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { font-size: 12px; color: var(--muted); font-weight: 600; background: #fafbfc; }
+    tr:last-child td { border-bottom: 0; }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    tr.good td { background: #f3fbf6; }
+    tr.warn td { background: #fffaf0; }
+    tr.bad td { background: #fff6f5; }
+    tr.you td { background: #f3f7fd; }
+    .kw { border-bottom: 1px solid var(--line); padding: 10px 0; }
+    .kw label { display: flex; gap: 8px; align-items: flex-start; font-weight: 600; }
+    .meta { margin-left: auto; color: var(--faint); font-size: 13px; font-weight: 400; white-space: nowrap; }
+    .kw-top { display: flex; gap: 8px; align-items: flex-start; }
+    .note { color: var(--muted); font-size: 13px; margin: 4px 0 0 24px; }
+    .callout { border-radius: 10px; padding: 12px 14px; border: 1px solid var(--line); }
+    .callout b { display: block; margin-bottom: 4px; }
+    .callout.info { background: var(--info-soft); border-color: #c9dff6; }
+    .callout.success { background: var(--green-soft); border-color: #c6ead6; }
+    .callout.warning { background: var(--amber-soft); border-color: #f0e0b4; }
+    .callout.danger { background: var(--red-soft); border-color: #f6cdc9; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    input[type="text"], input[type="number"], textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+      background: #fff;
+    }
+    input[type="number"] { width: 120px; }
+    textarea { min-height: 64px; resize: vertical; }
+    .count { font-size: 12px; color: var(--faint); }
+    .count.over { color: var(--red); font-weight: 650; }
+    .ad { border: 1px solid var(--line); border-radius: 10px; background: #fff; padding: 14px 16px; }
+    .ad .url { color: var(--muted); font-size: 13px; }
+    .ad .title { color: var(--blue); font-weight: 650; font-size: 16px; line-height: 1.4; }
+    .sponsored { float: right; font-size: 12px; border: 1px solid var(--line); border-radius: 999px; padding: 2px 8px; color: var(--muted); }
+    .bars { display: flex; flex-direction: column; gap: 8px; }
+    .bar-row { display: grid; grid-template-columns: 72px 1fr 72px; gap: 8px; align-items: center; font-size: 13px; }
+    .bar { height: 10px; background: #eef1f6; border-radius: 99px; overflow: hidden; }
+    .bar i { display: block; height: 100%; background: var(--blue); }
+    .usage { display: flex; height: 12px; border-radius: 99px; overflow: hidden; background: #eef1f6; }
+    .usage i { display: block; height: 100%; }
+    .nav { display: flex; gap: 8px; margin-top: 18px; }
+    @media (max-width: 720px) {
+      .stats, .grid2 { grid-template-columns: 1fr 1fr; }
+      .meta { white-space: normal; }
+      .kw-top { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap" id="app"></main>
+  <script>
+    const PRICE = 429;
+    const MARGIN = 0.45;
+    const BREAK_EVEN_CPA = PRICE * MARGIN;
+    const TARGET_CPA = 100;
+    const DAILY_BUDGET = 60;
+    const MONTHLY_BUDGET = DAILY_BUDGET * 30;
+    const RESERVE_RANK = 6;
+    const COMPETITORS = [
+      { name: "ChairCo", qs: 8, bid: 2.8 },
+      { name: "MarketCart", qs: 7, bid: 2.1 },
+      { name: "Roomly", qs: 6, bid: 1.5 },
+    ];
+    const MATCH_REACH = { exact: 0.42, phrase: 0.72, broad: 1.35 };
+    const MATCH_CVR = { exact: 1.08, phrase: 1, broad: 0.78 };
+    const POSITION_IS = { 1: 0.62, 2: 0.38, 3: 0.18, 4: 0.07 };
+    const POSITION_CTR = { 1: 0.078, 2: 0.041, 3: 0.018, 4: 0.007 };
+    const LANDING_SCORE = { product: 8, blog: 6, home: 4 };
+    const LANDING_CVR = { product: 1, blog: 0.7, home: 0.48 };
+    const SPEND_COLORS = ["#1d5fd0", "#d97706", "#0d7a43", "#6d28d9", "#0891b2", "#db2777", "#ca8a04", "#c42318"];
+    const INTENT_LABEL = { buy: "购买", research: "调研", price: "低价", competitor: "竞品", feature: "功能", wrong: "不相关", local: "到店" };
+    const STEPS = [
+      { id: "map", label: "1 结构" },
+      { id: "keywords", label: "2 选词" },
+      { id: "ads", label: "3 广告" },
+      { id: "auction", label: "4 拍卖" },
+      { id: "month", label: "5 复盘" },
+    ];
+    const KEYWORDS = [
+      { id: "buy", text: "buy ergonomic office chair", short: "购买词", intent: "buy", monthly: 8100, suggested: 2.4, cvr: 0.042, related: [], note: "购买意图最清楚，适合作为这组的核心词。" },
+      { id: "ergo", text: "ergonomic chair", short: "大词", intent: "research", monthly: 40500, suggested: 1.85, cvr: 0.018, related: ["best chair for back pain"], note: "搜索量很大，意图混着调研和购买。广泛匹配会扩到不带原词的相关查询。" },
+      { id: "best", text: "best office chair", short: "调研词", intent: "research", monthly: 12100, suggested: 1.55, cvr: 0.021, related: [], note: "还在比较。产品页要在首屏写出试用、保修和价格，才接得住。" },
+      { id: "cheap", text: "cheap office chair", short: "低价词", intent: "price", monthly: 22000, suggested: 0.95, cvr: 0.006, related: ["office chair under 100"], note: "对方想买便宜椅子。$429 的客单价很难接住，容易把预算花在不成交的点击上。" },
+      { id: "alt", text: "herman miller alternative", short: "竞品词", intent: "competitor", monthly: 5400, suggested: 2.1, cvr: 0.034, related: [], note: "可以买竞品词。广告要写成替代或对比，不能让人以为你就是 Herman Miller。" },
+      { id: "lumbar", text: "lumbar support chair", short: "腰托词", intent: "feature", monthly: 6600, suggested: 1.45, cvr: 0.028, related: [], note: "功能和产品卖点一致，适合和购买词放在相近的广告组。" },
+      { id: "stand", text: "standing desk", short: "升降桌", intent: "wrong", monthly: 74000, suggested: 1.7, cvr: 0.002, related: ["height adjustable desk"], note: "你卖的是椅子。这个词应该做否定关键词，而不是投进广告组。" },
+      { id: "near", text: "office chair near me", short: "到店词", intent: "local", monthly: 33100, suggested: 0.8, cvr: 0.003, related: [], note: "对方要附近门店。独立站只做全美配送，意图对不上。" },
+    ];
+    const QUERIES = ["buy ergonomic office chair", "ergonomic chair with headrest", "best office chair for back pain", "cheap office chair", "office chair under 100", "herman miller alternative", "standing desk", "height adjustable desk", "office chair near me", "best chair for back pain", "lumbar support chair"];
+    const WEAK_HEADLINES = ["Office Furniture Sale", "Shop Online Today", "Many Styles In Stock"];
+    const WEAK_DESCRIPTIONS = ["We sell chairs and other office furniture. Visit our website to see the full catalog.", "Fast checkout and nationwide delivery. Learn more about AeroSit on our homepage."];
+    const STRONG_HEADLINES = ["Ergonomic Office Chair", "30-Day Home Trial", "AeroSit Pro From $429"];
+    const STRONG_DESCRIPTIONS = ["Adjustable lumbar support, free US shipping, and a 30-day home trial.", "A Herman Miller alternative with a 12-year warranty and free US shipping."];
+    const QUIZZES = {
+      map: [
+        { id: "bill", prompt: "标准搜索广告，什么时候扣费？", options: [{ id: "impr", label: "广告展示在结果页上时" }, { id: "click", label: "有人点击广告时" }, { id: "sale", label: "有人完成购买时" }], answer: "click", why: "搜索广告的主流计费是 CPC：展示不扣费，点击才扣。购买用来计算 CPA 和 ROAS，不是这次点击的扣费事件。按千次展示付费是展示类广告的做法。" },
+        { id: "qs", prompt: "质量得分主要用来看什么？", options: [{ id: "cash", label: "账户余额和日预算" }, { id: "three", label: "预期点击率、广告相关性、着陆页体验" }, { id: "rank", label: "你的出价在行业里排第几" }], answer: "three", why: "质量得分是 1 到 10 的诊断，不是拍卖本身。真正进拍卖的，是当次的出价、这三项体验、广告附加信息，以及用户和上下文。" },
+        { id: "cpc", prompt: "你实际付的单次点击费用，通常是？", options: [{ id: "max", label: "你填写的最高 CPC" }, { id: "second", label: "刚好压过下一名所需的价格，且不超过最高 CPC" }, { id: "plan", label: "关键词规划师给出的参考价" }], answer: "second", why: "最高 CPC 是天花板。参考价只是计划时的估计。拍卖里你付的是维持当前排名所需的最低价格，所以经常低于自己的最高出价。" },
+        { id: "group", prompt: "同一个广告组里，最重要的组织原则是？", options: [{ id: "many", label: "词越多越好，让匹配自己判断" }, { id: "tight", label: "关键词、广告、着陆页讲同一件事" }, { id: "brand", label: "只投品牌词，其他词都太贵" }], answer: "tight", why: "品牌词便宜，但覆盖不了还不知道你的人。购买词和功能词可以投，前提是文案和着陆页接得住。不相关的查询用否定关键词拦住。" },
+      ],
+      keywords: [
+        { id: "kw-desk", prompt: "standing desk 应该怎么处理？", options: [{ id: "add", label: "放进广告组，扩大覆盖" }, { id: "neg", label: "做成否定关键词，不要投放" }, { id: "exact", label: "改成精确匹配就没问题" }], answer: "neg", why: "你卖的是椅子。升降桌和 near me 的意图对不上，放进广告组会花钱。用否定关键词拦住，而不是换一种匹配类型硬投。" },
+        { id: "kw-phrase", prompt: "词组匹配 ergonomic chair，下面哪一句会触发？", options: [{ id: "pain", label: "best chair for back pain" }, { id: "head", label: "ergonomic chair with headrest" }, { id: "near", label: "office chair near me" }], answer: "head", why: "词组匹配要求 ergonomic chair 按原顺序连续出现。with headrest 加在后面可以。best chair for back pain 没有原词，只在广泛匹配的扩展里出现。" },
+        { id: "kw-cheap", prompt: "cheap office chair 的主要问题是？", options: [{ id: "vol", label: "搜索量太小，不值得看" }, { id: "price", label: "$429 的椅子接不住低价需求" }, { id: "ban", label: "这个词不能写进广告" }], answer: "price", why: "这个词搜索量不小，但对方想买便宜椅子。点击会发生，转化很差，CPA 会高于目标。先从广告组里拿掉。" },
+      ],
+      ads: [
+        { id: "ad-len", prompt: "标题超过 30 个字符时，会怎样？", options: [{ id: "cut", label: "系统自动缩短后继续展示" }, { id: "drop", label: "这条标题不会投放" }, { id: "desc", label: "只影响描述，标题仍会展示" }], answer: "drop", why: "超长的标题或描述不会进入搜索结果，也不会计入质量分。空格也算字符。" },
+        { id: "ad-land", prompt: "购买词 buy ergonomic office chair，更合适的着陆页是？", options: [{ id: "home", label: "首页，什么都有一点" }, { id: "product", label: "产品页，价格和试用在同一页" }, { id: "blog", label: "博客，先讲办公知识" }], answer: "product", why: "查询已经是要买。首页和博客还要再跳一步，着陆页体验分和转化率都会下降。" },
+        { id: "ad-brand", prompt: "标题里写了 Herman Miller，又和普通购买词放在同一广告组。风险是？", options: [{ id: "none", label: "没有风险，标题想写就写" }, { id: "mix", label: "系统可能把竞品名混搭到其他查询上" }, { id: "ten", label: "质量分会因此变成 10" }], answer: "mix", why: "自适应搜索广告会从标题里挑句子组合。竞品词最好单独一个广告组，标题用 alternative 或 compare，不要写成官方店。" },
+      ],
+      auction: [
+        { id: "auc-rank", prompt: "本课里，广告评级怎么算？", options: [{ id: "mul", label: "最高 CPC × 质量得分" }, { id: "div", label: "质量得分 ÷ 最高 CPC" }, { id: "bud", label: "日预算 × 点击率" }], answer: "mul", why: "这是用来看懂排名的简化公式。真实拍卖还会算进广告附加信息和当次上下文。评级低于 6，本模型不给展示。" },
+        { id: "auc-cpc", prompt: "你这次实际付的 CPC，通常是？", options: [{ id: "max", label: "等于你填的最高 CPC" }, { id: "next", label: "压过下一名所需的价格，且不超过最高 CPC" }, { id: "avg", label: "等于三家竞争对手的平均出价" }], answer: "next", why: "最高 CPC 是天花板。实际 CPC = 下一名广告评级 ÷ 你的质量得分 + $0.01。所以质量分更高时，同样排名往往更便宜。" },
+        { id: "auc-qs", prompt: "质量分从 8 提到 9，排名仍是第 2。实际 CPC 通常会？", options: [{ id: "up", label: "变贵，因为排名没变" }, { id: "down", label: "变便宜，因为除数变大了" }, { id: "same", label: "完全不变，质量分只影响诊断" }], answer: "down", why: "下一名的广告评级没变，你的质量分变高，实际 CPC = 下一名评级 ÷ 质量分。排名可以不动，点击会更便宜。" },
+      ],
+      month: [
+        { id: "mo-cpa", prompt: "账户 CPA 还行，但其中一个词 CPA 很高。先做什么？", options: [{ id: "budget", label: "立刻把日预算翻倍" }, { id: "cut", label: "先停掉或拆走那个词" }, { id: "roas", label: "只看总 ROAS，单词不用管" }], answer: "cut", why: "合计会被好词托住。钱如果主要花在 cheap、升降桌或到店词上，先拿掉它们，购买词自己的 CPA 会清楚很多。" },
+        { id: "mo-be", prompt: "这把椅子的保本 CPA $193 是怎么来的？", options: [{ id: "margin", label: "售价 $429 × 毛利率 45%" }, { id: "click", label: "日预算 $60 ÷ 点击率" }, { id: "qs", label: "质量分 × 最高 CPC" }], answer: "margin", why: "保本获客成本 = 售价 × 毛利率。目标 CPA $100 比保本更严，是为了留下利润，不是为了刚好不亏。" },
+        { id: "mo-match", prompt: "精确匹配 CPA 很好，但转化很少。下一步更稳的是？", options: [{ id: "broad", label: "直接改成广泛匹配放量" }, { id: "phrase", label: "先把获胜词扩成词组匹配，看新增查询" }, { id: "home", label: "把着陆页改成首页" }], answer: "phrase", why: "精确匹配效率高、查询少。词组匹配通常能多接一些仍包含原词的查询。广泛匹配一下扩太开，容易接住不购买的搜索。" },
+      ],
+    };
+    const STOP = new Set(["for", "the", "a", "an", "of", "to", "and", "me"]);
+
+    function money(value, digits = 0) {
+      return value.toLocaleString("en-US", { style: "currency", currency: "USD", minimumFractionDigits: digits, maximumFractionDigits: digits });
+    }
+    function tokens(value) {
+      return value.toLowerCase().replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter(Boolean);
+    }
+    function usable(value, max) { return value.trim().length > 0 && value.length <= max; }
+    function validLines(lines, max) { return lines.filter((line) => usable(line, max)); }
+    function expectedCtr(headlines, descriptions) {
+      const heads = validLines(headlines, 30);
+      const descs = validLines(descriptions, 90);
+      const all = [...heads, ...descs].join(" ").toLowerCase();
+      const headText = heads.join(" ").toLowerCase();
+      let score = 4;
+      if (/\b(shop|buy|order|trial)\b/.test(headText)) score += 2;
+      if (/\d/.test(all)) score += 2;
+      if (all.includes("aerosit")) score += 1;
+      if (heads.length >= 3 && descs.length >= 2) score += 1;
+      return Math.max(2, Math.min(10, score));
+    }
+    function relevanceScore(keyword, headlines, descriptions) {
+      const heads = validLines(headlines, 30).join(" ").toLowerCase();
+      const descs = validLines(descriptions, 90).join(" ").toLowerCase();
+      const words = tokens(keyword.text).filter((word) => !STOP.has(word));
+      const inHeadline = words.some((word) => heads.includes(word));
+      const inDescription = words.some((word) => descs.includes(word));
+      let score = inHeadline ? 8 : inDescription ? 5 : 3;
+      if (keyword.intent === "wrong" && !inHeadline && !inDescription) score = 2;
+      if (keyword.intent === "local") score = Math.min(score, 3);
+      return score;
+    }
+    function qualityScore(expected, relevance, landing) {
+      return Math.max(1, Math.min(10, Math.round((expected + relevance + landing) / 3)));
+    }
+    function landingUrl(landing) {
+      if (landing === "product") return "aerosit.example › chairs › pro";
+      if (landing === "blog") return "aerosit.example › blog › office-setup";
+      return "aerosit.example";
+    }
+    function runAuction(qs, bid) {
+      const rank = bid * qs;
+      const everyone = [
+        { name: "AeroSit", qs, bid, rank, you: true, position: null },
+        ...COMPETITORS.map((item) => ({ name: item.name, qs: item.qs, bid: item.bid, rank: item.bid * item.qs, you: false, position: null })),
+      ];
+      const eligible = everyone.filter((item) => item.bid > 0 && item.rank >= RESERVE_RANK).sort((a, b) => b.rank - a.rank || Number(a.you) - Number(b.you));
+      eligible.forEach((item, index) => { item.position = index + 1; });
+      const you = everyone.find((item) => item.you);
+      const position = you?.position ?? null;
+      const shown = position != null;
+      const next = shown ? eligible[position] ?? null : null;
+      const nextRank = next ? next.rank : RESERVE_RANK;
+      const rawCpc = shown && qs > 0 ? nextRank / qs + 0.01 : 0;
+      const cpc = shown ? Math.min(bid, Math.round(rawCpc * 100) / 100) : 0;
+      const rows = [...everyone].sort((a, b) => b.rank - a.rank || Number(a.you) - Number(b.you));
+      return { rows, shown, position, rank, cpc, rawCpc, nextName: next?.name ?? null, nextRank };
+    }
+    function matchKind(keyword, query, match) {
+      const key = tokens(keyword.text);
+      const queryTokens = tokens(query);
+      const keyText = key.join(" ");
+      const queryText = queryTokens.join(" ");
+      if (match === "exact") return queryText === keyText ? "same" : null;
+      if (match === "phrase") {
+        if (queryTokens.length < key.length) return null;
+        for (let i = 0; i <= queryTokens.length - key.length; i += 1) {
+          if (queryTokens.slice(i, i + key.length).join(" ") === keyText) return "contains";
+        }
+        return null;
+      }
+      if (key.every((word) => queryTokens.includes(word))) return "contains";
+      if (keyword.related.some((item) => tokens(item).join(" ") === queryText)) return "related";
+      return null;
+    }
+    function simulate(input) {
+      const heads = validLines(input.headlines, 30);
+      const descs = validLines(input.descriptions, 90);
+      const eligibleAds = heads.length > 0 && descs.length > 0;
+      const expected = expectedCtr(input.headlines, input.descriptions);
+      const landingScore = LANDING_SCORE[input.landing];
+      const copyFactor = 0.82 + (expected - 5) * 0.06;
+      const draft = KEYWORDS.filter((keyword) => input.ids.includes(keyword.id)).map((keyword) => {
+        const relevance = relevanceScore(keyword, input.headlines, input.descriptions);
+        const qs = eligibleAds ? qualityScore(expected, relevance, landingScore) : 1;
+        const auction = eligibleAds ? runAuction(qs, input.bid) : null;
+        const position = auction?.position ?? null;
+        const cpc = auction?.cpc ?? 0;
+        const reach = keyword.monthly * MATCH_REACH[input.match];
+        const share = position ? POSITION_IS[position] ?? 0 : 0;
+        const impressions = reach * share;
+        const ctr = position ? (POSITION_CTR[position] ?? 0) * copyFactor : 0;
+        const clicks = impressions * ctr;
+        const cvr = keyword.cvr * LANDING_CVR[input.landing] * MATCH_CVR[input.match] * (relevance >= 6 ? 1 : 0.85);
+        return { id: keyword.id, short: keyword.short, text: keyword.text, intent: keyword.intent, expected, relevance, landingScore, qs, rank: auction?.rank ?? 0, position, cpc, impressions, clicks, cvr, conversions: clicks * cvr, cost: clicks * cpc };
+      });
+      const unconstrained = draft.reduce((sum, row) => sum + row.cost, 0);
+      const factor = unconstrained > MONTHLY_BUDGET ? MONTHLY_BUDGET / unconstrained : 1;
+      const rows = draft.map((row) => {
+        const clicks = Math.round(row.clicks * factor);
+        return { ...row, impressions: Math.round(row.impressions * factor), clicks, conversions: clicks * row.cvr, cost: clicks * row.cpc };
+      });
+      return { rows, factor, eligibleAds };
+    }
+    function cpaOf(cost, conversions) {
+      if (conversions < 0.05) return null;
+      return cost / conversions;
+    }
+    function esc(value) {
+      return String(value).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+    }
+
+    const defaults = {
+      step: "map",
+      answers: {},
+      selected: ["buy", "cheap"],
+      match: "phrase",
+      headlines: [...WEAK_HEADLINES],
+      descriptions: [...WEAK_DESCRIPTIONS],
+      landing: "product",
+      bidText: "2.40",
+      focusId: "buy",
+    };
+    let state = load();
+    function load() {
+      try {
+        const saved = JSON.parse(localStorage.getItem("google-sem-lab-v1") || "null");
+        if (!saved) return structuredClone(defaults);
+        return { ...structuredClone(defaults), ...saved, headlines: saved.headlines || [...WEAK_HEADLINES], descriptions: saved.descriptions || [...WEAK_DESCRIPTIONS], answers: saved.answers || {}, selected: saved.selected || ["buy", "cheap"] };
+      } catch {
+        return structuredClone(defaults);
+      }
+    }
+    function save() {
+      localStorage.setItem("google-sem-lab-v1", JSON.stringify(state));
+    }
+
+    function model() {
+      const bid = Number.parseFloat(state.bidText);
+      const maxCpc = Number.isFinite(bid) && bid > 0 ? bid : 0;
+      const active = KEYWORDS.filter((keyword) => state.selected.includes(keyword.id));
+      const focus = active.find((keyword) => keyword.id === state.focusId) ?? active[0];
+      const result = simulate({ ids: state.selected, match: state.match, headlines: state.headlines, descriptions: state.descriptions, landing: state.landing, bid: maxCpc });
+      const spend = result.rows.reduce((sum, row) => sum + row.cost, 0);
+      const clicks = result.rows.reduce((sum, row) => sum + row.clicks, 0);
+      const impressions = result.rows.reduce((sum, row) => sum + row.impressions, 0);
+      const conversions = result.rows.reduce((sum, row) => sum + row.conversions, 0);
+      return { maxCpc, active, focus, result, spend, clicks, impressions, conversions, cpa: cpaOf(spend, conversions), revenue: conversions * PRICE, contribution: conversions * PRICE * MARGIN - spend, roas: spend > 0 ? (conversions * PRICE) / spend : 0, expected: expectedCtr(state.headlines, state.descriptions), landingScore: LANDING_SCORE[state.landing] };
+    }
+
+    function pills(items, current, attr) {
+      return `<div class="steps">${items.map((item) => `<button class="pill${item.id === current ? " active" : ""}" data-${attr}="${esc(item.id)}">${esc(item.label)}</button>`).join("")}</div>`;
+    }
+    function callout(tone, title, body) {
+      return `<div class="callout ${tone}"><b>${esc(title)}</b><div>${body}</div></div>`;
+    }
+    function table(headers, rows, tones = [], numericFrom = 1) {
+      return `<table><thead><tr>${headers.map((header, index) => `<th class="${index >= numericFrom ? "num" : ""}">${esc(header)}</th>`).join("")}</tr></thead><tbody>${rows.map((row, index) => `<tr class="${tones[index] || ""}">${row.map((cell, cellIndex) => `<td class="${cellIndex >= numericFrom ? "num" : ""}">${cell}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+    }
+    function practice(step) {
+      const items = QUIZZES[step];
+      const answered = items.filter((item) => state.answers[item.id]).length;
+      const correct = items.filter((item) => state.answers[item.id] === item.answer).length;
+      return `<section class="stack"><h2>练一练</h2><p class="fine">已答 ${answered} / ${items.length}${answered ? ` · 答对 ${correct}` : ""}</p>${items.map((question) => {
+        const picked = state.answers[question.id];
+        return `<div class="stack" style="gap:8px"><p><b>${esc(question.prompt)}</b></p><div class="row">${question.options.map((option) => `<button class="pill${picked === option.id ? " active" : ""}" data-quiz="${esc(question.id)}" data-option="${esc(option.id)}">${esc(option.label)}</button>`).join("")}</div>${picked ? callout(picked === question.answer ? "success" : "warning", picked === question.answer ? "对" : "再看一次", esc(question.why)) : ""}</div>`;
+      }).join("")}</section>`;
+    }
+    function monthNotes(m) {
+      const notes = [];
+      const junk = m.result.rows.filter((row) => row.intent === "wrong" || row.intent === "local");
+      const cheap = m.result.rows.find((row) => row.id === "cheap");
+      const cheapCpa = cheap ? cpaOf(cheap.cost, cheap.conversions) : null;
+      const trademark = state.headlines.some((line) => /herman miller/i.test(line));
+      if (!m.result.eligibleAds) notes.push(["warning", "广告没有可投放的文案", "至少需要 1 条不超过 30 字符的标题，和 1 条不超过 90 字符的描述。超出字数的行不会参与展示。"]);
+      else if (m.active.length === 0) notes.push(["warning", "广告组里还没有关键词", "回到选词，至少留下一个和椅子购买有关的词。没有关键词，这个广告组不会产生查询。"]);
+      else if (m.clicks === 0) notes.push(["warning", "30 天没有拿到点击", `当前最高 CPC 是 ${money(m.maxCpc, 2)}。广告评级需要达到 ${RESERVE_RANK} 才会展示。把出价提高到能进入拍卖的水平，或先把质量分做上去。`]);
+      else {
+        if (junk.length) {
+          const spent = junk.reduce((sum, row) => sum + row.cost, 0);
+          notes.push(["danger", "有词和这把椅子对不上", `${junk.map((row) => row.text).join("、")} 花了 ${money(spent)}。升降桌和到店查询应该放进否定关键词，而不是和购买词挤在一个广告组。`]);
+        }
+        if (trademark && m.active.some((keyword) => keyword.id !== "alt")) notes.push(["warning", "竞品名写进了会混搭的标题", "自适应搜索广告会从标题里挑句子组合。Herman Miller 如果出现在标题里，可能展示给搜 ergonomic chair 的人。竞品词单独建广告组，标题用 alternative 或 compare。"]);
+        if (cheap && cheap.cost > 0 && (cheapCpa == null || cheapCpa > TARGET_CPA)) notes.push(["warning", "低价词带走了大部分无效花费", `cheap office chair 花了 ${money(cheap.cost)}，${cheapCpa == null ? "几乎没有转化" : `CPA ${money(cheapCpa)}`}。售价 ${money(PRICE)} 接不住便宜椅子的需求。先停掉它，购买词自己的效率会清楚很多。`]);
+        if (m.cpa != null && m.cpa > BREAK_EVEN_CPA) notes.push(["danger", "这组设置高于保本获客成本", `保本 CPA 是 ${money(BREAK_EVEN_CPA)}，现在是 ${money(m.cpa)}。广告后毛利是 ${money(m.contribution)}。先拿掉偏离意图的词，再谈加预算。`]);
+        else if (m.cpa != null && m.cpa > TARGET_CPA && notes.length < 2) notes.push(["warning", "还没进目标 CPA", `目标是 ${money(TARGET_CPA)} 以内，现在是 ${money(m.cpa)}。还没亏掉毛利，但放量之前要先把贵而差的词清掉。`]);
+        if (m.result.factor < 0.95) notes.push(["info", "月预算已经顶满", `按现在的点击需求，预算只够兑现约 ${Math.round(m.result.factor * 100)}% 的展示。这就是「因预算丢失的展示份额」。确认 CPA 合格之后，再加日预算。`]);
+        if (state.match === "broad" && m.active.some((keyword) => keyword.id === "ergo" || keyword.id === "stand")) notes.push(["warning", "广泛匹配把查询扩出去了", "大词和不相关词用广泛匹配，会接住 best chair for back pain、height adjustable desk 这种没有原词的查询。购买词先用词组或精确，扩展留给已经验证过的词。"]);
+        if (state.landing !== "product") notes.push(["warning", "着陆页和购买查询还隔着一步", state.landing === "home" ? "首页什么都有一点，和某一条查询对不齐，着陆页分和转化率都会下降。购买词落到产品页。" : "博客能接调研，但购买还要再跳一次。搜索广告的着陆页要直接回答这句查询。"]);
+        if (m.cpa != null && m.cpa <= TARGET_CPA && junk.length === 0 && !cheap && state.landing === "product" && m.result.eligibleAds) {
+          notes.push(["success", "这组已经低于目标 CPA", state.match === "exact" ? "精确匹配效率高，查询量也小。下一步可以把已经获胜的词扩成词组匹配，单独观察新增查询，而不是直接改成广泛。" : "接下来给这组加站点链接和宣传信息，并把竞品词拆成单独广告组。转化追踪稳定之后，再考虑目标 CPA 出价。"]);
+        }
+      }
+      return notes.slice(0, 3).map((note) => callout(note[0], note[1], esc(note[2]))).join("");
+    }
+    function stepMap(m) {
+      return `<section class="stack"><h2>搜索广告在账户里怎么放</h2><p>SEM 在这里指 Google 搜索广告：你为查询付钱，广告出现在结果页，有人点击才扣费。SEO 积累的是自然排名，搜索广告买的是当天就能开关的流量。</p>${table(["层级", "这个案例里它决定什么"], [["账户", "AeroSit 美国"], ["广告系列", "搜索 · 美国 · 英语 · 日预算 $60 · 手动 CPC"], ["广告组", "人体工学椅的购买意图。一组只讲一件事"], ["关键词", "你在第 2 步选择，并决定匹配类型"], ["广告", "自适应搜索广告：标题 30 字符，描述 90 字符"], ["着陆页", "产品页、博客或首页。查询和页面要是同一件事"]].map((row) => row.map(esc)), [], 99)}<p class="lede">质量得分把三件事合成一个 1 到 10 的诊断：预期点击率、广告和关键词的相关性、着陆页体验。本课用「最高 CPC × 质量得分」当作广告评级，方便看清排名。真实拍卖还会算进广告附加信息和当次上下文。</p>${practice("map")}${callout("info", "为什么这里用手动 CPC", "转化追踪稳定之后，账户通常会改成尽可能提高转化或目标 CPA。智能出价仍受广告质量影响，只是每次出价由系统在目标下调整。手动 CPC 把乘法留在明处，方便先看懂拍卖。")}</section>`;
+    }
+    function stepKeywords() {
+      const active = KEYWORDS.filter((keyword) => state.selected.includes(keyword.id));
+      const matchCopy = { exact: "本模型里，精确匹配只在查询与关键词完全相同时触发。真实账户还会覆盖拼写和相同含义的近义变体。", phrase: "词组匹配要求关键词按原顺序连续出现，前后可以有别的词。ergonomic chair 能接住 ergonomic chair with headrest。", broad: "广泛匹配不要求顺序。下面有几条查询即使没有原词也会触发，用来模拟扩展，例如 ergonomic chair 会接住 best chair for back pain。" };
+      const rows = QUERIES.map((query) => {
+        const hits = active.map((keyword) => ({ keyword, kind: matchKind(keyword, query, state.match) })).filter((hit) => hit.kind);
+        const tone = hits.length === 0 ? "" : hits.some((hit) => hit.keyword.intent === "wrong" || hit.keyword.intent === "local") ? "bad" : hits.some((hit) => hit.keyword.intent === "price") ? "warn" : "good";
+        const detail = hits.length === 0 ? "—" : hits.map((hit) => `${hit.keyword.text}${hit.kind === "related" ? " · 扩展" : ""}`).join("；");
+        return { cells: [esc(query), hits.length ? "会触发" : "不会触发", esc(detail)], tone };
+      });
+      return `<section class="stack"><h2>选会花钱的查询</h2><p>关键词不是页面文案，是你愿意为之付费的查询。整个广告组先共用一种匹配类型：精确只接相同查询，词组要求原词按顺序出现，广泛还会扩到相关查询。真实账户可以逐个词设置匹配，也可以加否定关键词。</p><div class="row"><select id="match" data-match>${[["exact", "精确匹配"], ["phrase", "词组匹配"], ["broad", "广泛匹配"]].map(([id, label]) => `<option value="${id}"${state.match === id ? " selected" : ""}>${label}</option>`).join("")}</select><button class="btn" data-preset="good">载入高意图词组</button><button class="btn" data-preset="bad">载入一组常见错误</button></div><p class="fine">${matchCopy[state.match]}</p><div>${KEYWORDS.map((keyword) => `<div class="kw"><div class="kw-top"><label><input type="checkbox" data-kw="${keyword.id}"${state.selected.includes(keyword.id) ? " checked" : ""}> ${esc(keyword.text)}</label><span class="meta">${INTENT_LABEL[keyword.intent]} · 月搜索 ${keyword.monthly.toLocaleString("en-US")} · 参考出价 ${money(keyword.suggested, 2)}</span></div><p class="note">${esc(keyword.note)}</p></div>`).join("")}</div><h3>这 11 条查询会不会花到预算</h3><p class="fine">匹配结果随上面的勾选和匹配类型变化。扩展表示广泛匹配接住了一条没有完整原词的相关查询。</p>${table(["用户查询", "结果", "被哪个词接住"], rows.map((row) => row.cells), rows.map((row) => row.tone), 99)}<p class="lede">拦住一类查询，用否定关键词，不要靠把它们加进广告组。standing desk 和 near me 属于该否定的查询。</p>${practice("keywords")}</section>`;
+    }
+    function stepAds(m) {
+      const servedHeads = validLines(state.headlines, 30).slice(0, 3);
+      const servedDescs = validLines(state.descriptions, 90);
+      const overlong = state.headlines.some((line) => line.length > 30) || state.descriptions.some((line) => line.length > 90);
+      const trademark = state.headlines.some((line) => /herman miller/i.test(line));
+      const landWhy = state.landing === "product" ? "产品页和购买查询一致。" : state.landing === "blog" ? "博客能解释问题，购买还要再跳一步。" : "首页和单条查询对不齐。";
+      const preview = servedHeads.length && servedDescs.length
+        ? `<div class="ad"><span class="sponsored">Sponsored</span><div class="url">${esc(landingUrl(state.landing))}</div><div class="title">${esc(servedHeads.join(" | "))}</div><p class="lede">${esc(servedDescs.join(" "))}</p></div>`
+        : callout("warning", "搜索结果里还看不到广告", "保留至少一条合格标题和一条合格描述。字数以内的行才会出现在预览里。");
+      const relevanceRows = m.active.map((keyword) => {
+        const relevance = relevanceScore(keyword, state.headlines, state.descriptions);
+        return [esc(keyword.text), String(relevance), String(qualityScore(m.expected, relevance, m.landingScore))];
+      });
+      return `<section class="stack"><h2>写能被点到的广告</h2><p>自适应搜索广告最多 15 条标题、4 条描述，系统挑 3 条标题和描述去展示。这里收成 3 条标题和 2 条描述，方便看每个字怎么影响质量分。标题 30 个字符，描述 90 个字符，空格也算。</p><div class="row"><button class="btn" data-copy="strong">换成更贴词的文案</button><button class="btn" data-copy="weak">恢复初稿</button></div><div class="grid2"><div class="stack"><h3>标题</h3>${state.headlines.map((line, index) => `<div><input id="h${index}" data-headline="${index}" type="text" value="${esc(line)}"><div class="count${line.length > 30 ? " over" : ""}">${line.length}/30${line.length > 30 ? "，这条不会投放" : ""}</div></div>`).join("")}</div><div class="stack"><h3>描述</h3>${state.descriptions.map((line, index) => `<div><textarea id="d${index}" data-description="${index}">${esc(line)}</textarea><div class="count${line.length > 90 ? " over" : ""}">${line.length}/90${line.length > 90 ? "，这条不会投放" : ""}</div></div>`).join("")}</div></div>${overlong ? callout("warning", "有文案超出字数", "超出 30 或 90 字符的行不会进入搜索结果，也不会计入下面的质量分。") : ""}${trademark ? callout("warning", "标题里出现了竞品品牌", "可以投 herman miller alternative，但标题不要写成官方店。这个品牌名如果和其他购买词共用广告组，可能被混搭到无关查询上。") : ""}${preview}<h3>文案和页面现在的诊断分</h3><p class="fine">预期点击率和着陆页是整组广告共用的。相关性按关键词分开，拍卖那一步会逐词使用。分数是教学模型里的 1 到 10。</p>${table(["组成部分", "分数", "依据"], [[ "预期点击率", String(m.expected), "看标题里有没有行动号召、具体数字、品牌，以及合格文案是否写满 3 条标题和 2 条描述。" ], [ "着陆页体验", String(m.landingScore), landWhy ]].map((row) => row.map(esc)), [], 1)}<div class="row"><b>着陆页</b><select id="landing" data-landing style="width:auto">${[["product", "产品页 /chairs/pro"], ["blog", "博客 /blog/office-setup"], ["home", "首页 /"]].map(([id, label]) => `<option value="${id}"${state.landing === id ? " selected" : ""}>${label}</option>`).join("")}</select></div>${m.active.length ? table(["关键词", "相关性", "合成质量分"], relevanceRows, [], 1) : ""}${practice("ads")}</section>`;
+    }
+    function stepAuction(m) {
+      if (!m.focus) return `<section class="stack"><h2>看一次拍卖怎么排名</h2><p>广告评级 = 最高 CPC × 质量得分。评级低于 ${RESERVE_RANK} 时，本模型不给展示。实际 CPC = 下一名的广告评级 ÷ 你的质量得分 + $0.01，并且不超过你的最高出价。三家竞争对手的出价和质量分是固定的。</p>${callout("warning", "还没有可以拍卖的关键词", "回到选词，至少选一个词。拍卖是针对某一条关键词计算的，不同的词质量分不同。")}${practice("auction")}</section>`;
+      const relevance = relevanceScore(m.focus, state.headlines, state.descriptions);
+      const ready = validLines(state.headlines, 30).length > 0 && validLines(state.descriptions, 90).length > 0;
+      const qs = ready ? qualityScore(m.expected, relevance, m.landingScore) : 0;
+      const auction = runAuction(qs, m.maxCpc);
+      const result = auction.shown
+        ? callout("info", `实际 CPC ${money(auction.cpc, 2)}`, `${auction.nextName ? `下一名是 ${esc(auction.nextName)}，广告评级 ${auction.nextRank.toFixed(1)}。实际 CPC = ${auction.nextRank.toFixed(1)} ÷ ${qs} + $0.01 = ${auction.rawCpc.toFixed(2)}。` : `你是最后一名，按展示门槛 ${RESERVE_RANK} 计算。实际 CPC = ${RESERVE_RANK} ÷ ${qs} + $0.01 = ${auction.rawCpc.toFixed(2)}。`}${auction.cpc + 0.001 < auction.rawCpc ? ` 计算结果高于最高出价，所以封顶在 ${money(m.maxCpc, 2)}。` : ` 最高出价是 ${money(m.maxCpc, 2)}，这次不用付满。`}`)
+        : callout("warning", "这次没有展示", `广告评级 ${auction.rank.toFixed(1)}，低于展示门槛 ${RESERVE_RANK}。提高最高 CPC，或回到广告步骤把相关性、标题和着陆页做上去。`);
+      return `<section class="stack"><h2>看一次拍卖怎么排名</h2><p>广告评级 = 最高 CPC × 质量得分。评级低于 ${RESERVE_RANK} 时，本模型不给展示。实际 CPC = 下一名的广告评级 ÷ 你的质量得分 + $0.01，并且不超过你的最高出价。三家竞争对手的出价和质量分是固定的。</p>${pills(m.active.map((item) => ({ id: item.id, label: item.short })), m.focus.id, "focus")}<p><b>${esc(m.focus.text)}</b></p><div class="row"><span>最高 CPC</span><input id="bid" data-bid type="number" min="0" step="0.01" value="${esc(state.bidText)}"></div><p>预期点击率 ${m.expected}，相关性 ${relevance}，着陆页 ${m.landingScore}，质量分 ${qs}。广告评级 = ${money(m.maxCpc, 2)} × ${qs} = ${auction.rank.toFixed(1)}。</p>${table(["广告主", "质量分", "最高 CPC", "广告评级", "排名"], auction.rows.map((row) => [row.you ? "AeroSit（你）" : esc(row.name), String(row.qs), money(row.bid, 2), row.rank.toFixed(1), row.position ? `第 ${row.position} 位` : "未展示"]), auction.rows.map((row) => row.you ? (auction.shown ? "you" : "warn") : ""), 1)}${result}<p class="lede">这个广告组共用一个最高 CPC。购买词和低价词如果放在一起，就会用同一个价去拍两种意图。</p>${practice("auction")}</section>`;
+    }
+    function stepMonth(m) {
+      const empty = m.active.length === 0 || !m.result.eligibleAds;
+      let body = "";
+      if (empty) {
+        body = callout("warning", m.result.eligibleAds ? "没有关键词可算" : "没有合格广告可算", m.result.eligibleAds ? "先在选词里留下至少一个关键词。" : "标题和描述都需要至少一条在字数以内的文案。");
+      } else {
+        const tone = (value, good, mid) => value == null ? "warn" : value <= good ? "good" : value <= mid ? "warn" : "bad";
+        const chartRows = m.result.rows.filter((row) => row.cost > 0).sort((a, b) => b.cost - a.cost);
+        const maxCost = chartRows[0] ? chartRows[0].cost : 1;
+        const chart = chartRows.length ? `<div class="usage" aria-label="月预算使用">${chartRows.map((row) => `<i style="width:${(row.cost / MONTHLY_BUDGET) * 100}%;background:${SPEND_COLORS[KEYWORDS.findIndex((keyword) => keyword.id === row.id) % SPEND_COLORS.length]}"></i>`).join("")}</div><p class="fine">月预算已使用 ${Math.round((m.spend / MONTHLY_BUDGET) * 100)}% · ${money(m.spend)} / ${money(MONTHLY_BUDGET)}。色块从左到右按花费排序：${chartRows.map((row) => `${row.short} ${money(row.cost)}`).join("，")}</p><h3>30 天模拟花费按关键词</h3><div class="bars">${chartRows.map((row) => `<div class="bar-row"><span>${esc(row.short)}</span><div class="bar"><i style="width:${Math.max(2, (row.cost / maxCost) * 100)}%"></i></div><span>${money(Math.round(row.cost))}</span></div>`).join("")}</div><p class="fine">来源：本页教学拍卖模型 · 日预算 $60 × 30 天 · 竞争对手出价固定 · 花费为四舍五入后的点击乘以实际 CPC</p>` : "";
+        const tones = m.result.rows.map((row) => {
+          if (row.clicks === 0) return "warn";
+          if (row.intent === "wrong" || row.intent === "local" || row.intent === "price") return "bad";
+          if (row.conversions > 0 && row.cost / row.conversions <= TARGET_CPA) return "good";
+          if (row.conversions > 0 && row.cost / row.conversions <= BREAK_EVEN_CPA) return "warn";
+          return "bad";
+        });
+        body = `<p>30 天预估展示 ${m.impressions.toLocaleString("en-US")} 次，点击 ${m.clicks.toLocaleString("en-US")} 次${m.impressions ? `（点击率 ${((m.clicks / m.impressions) * 100).toFixed(1)}%）` : ""}，花费 ${money(m.spend)}，转化 ${m.conversions.toFixed(1)} 单。</p><div class="stats"><div class="stat ${tone(m.cpa, TARGET_CPA, BREAK_EVEN_CPA)}"><b>${m.cpa == null ? "—" : money(m.cpa)}</b><span>实际 CPA</span></div><div class="stat ${m.spend > 0 ? (m.roas >= 4 ? "good" : m.roas >= 1 ? "warn" : "bad") : "warn"}"><b>${m.spend > 0 ? `${m.roas.toFixed(1)}x` : "—"}</b><span>ROAS</span></div><div class="stat ${m.contribution > 0 && m.cpa != null && m.cpa <= TARGET_CPA ? "good" : m.contribution > 0 ? "warn" : "bad"}"><b>${money(m.contribution)}</b><span>广告后毛利</span></div></div>${chart}${table(["关键词", "质量分", "排名", "花费", "转化", "CPA"], m.result.rows.map((row) => { const rowCpa = cpaOf(row.cost, row.conversions); return [esc(row.text), String(row.qs), row.position ? `第 ${row.position} 位` : "未展示", money(row.cost), row.conversions.toFixed(1), rowCpa == null ? "—" : money(rowCpa)]; }), tones, 1)}<p class="fine">行颜色：达到目标 CPA 为好，低价、不相关、到店为差，有点击但偏贵为警告，没拿到点击同样标成警告。</p>`;
+      }
+      return `<section class="stack"><h2>用 30 天结果做判断</h2><p class="lede">日预算 ${money(DAILY_BUDGET)} 连续跑 30 天，月预算 ${money(MONTHLY_BUDGET)}。搜索量用月搜索量，展示份额和点击率随排名变化。改前面的词、文案、着陆页或出价，这页会重算。</p>${body}${monthNotes(m)}${practice("month")}</section>`;
+    }
+
+    function view() {
+      const m = model();
+      const index = STEPS.findIndex((item) => item.id === state.step);
+      const body = state.step === "map" ? stepMap(m) : state.step === "keywords" ? stepKeywords() : state.step === "ads" ? stepAds(m) : state.step === "auction" ? stepAuction(m) : stepMonth(m);
+      return `<h1>Google 搜索广告实训</h1><p class="lede">案例是 AeroSit Pro，一把卖到美国的人体工学椅。售价 ${money(PRICE)}，毛利率 45%，所以保本获客成本是 ${money(BREAK_EVEN_CPA)}。这轮练习的目标，是把 CPA 控制在 ${money(TARGET_CPA)} 以内。</p><p class="fine">拍卖和 30 天数字来自本页的教学模型：手动 CPC、竞争对手出价固定、不含季节和受众。用来建立直觉，不是 Google Ads 后台导出。</p><div class="stats"><div class="stat"><b>${money(PRICE)}</b><span>售价</span></div><div class="stat"><b>${money(BREAK_EVEN_CPA)}</b><span>保本 CPA</span></div><div class="stat info"><b>${money(TARGET_CPA)}</b><span>目标 CPA</span></div><div class="stat"><b>${money(DAILY_BUDGET)}</b><span>日预算</span></div></div>${pills(STEPS, state.step, "step")}<div class="split"></div>${body}<div class="nav"><button class="btn" data-move="-1"${index <= 0 ? " disabled" : ""}>上一步</button><button class="btn primary" data-move="1"${index >= STEPS.length - 1 ? " disabled" : ""}>下一步</button></div>`;
+    }
+    function render() {
+      const active = document.activeElement;
+      const id = active && active.id;
+      const start = active && active.selectionStart;
+      const end = active && active.selectionEnd;
+      document.getElementById("app").innerHTML = view();
+      if (id) {
+        const next = document.getElementById(id);
+        if (next) {
+          next.focus();
+          if (start != null && next.setSelectionRange) next.setSelectionRange(start, end);
+        }
+      }
+      save();
+    }
+    document.getElementById("app").addEventListener("click", (event) => {
+      const button = event.target.closest("button");
+      if (!button) return;
+      if (button.dataset.step) state.step = button.dataset.step;
+      if (button.dataset.focus) state.focusId = button.dataset.focus;
+      if (button.dataset.quiz) state.answers[button.dataset.quiz] = button.dataset.option;
+      if (button.dataset.move) {
+        const index = STEPS.findIndex((item) => item.id === state.step) + Number(button.dataset.move);
+        if (STEPS[index]) state.step = STEPS[index].id;
+      }
+      if (button.dataset.preset === "good") { state.selected = ["buy", "lumbar", "alt", "best"]; state.match = "phrase"; }
+      if (button.dataset.preset === "bad") { state.selected = ["cheap", "stand", "near", "ergo"]; state.match = "broad"; }
+      if (button.dataset.copy === "strong") { state.headlines = [...STRONG_HEADLINES]; state.descriptions = [...STRONG_DESCRIPTIONS]; }
+      if (button.dataset.copy === "weak") { state.headlines = [...WEAK_HEADLINES]; state.descriptions = [...WEAK_DESCRIPTIONS]; }
+      render();
+    });
+    document.getElementById("app").addEventListener("change", (event) => {
+      const target = event.target;
+      if (target.dataset.match) state.match = target.value;
+      if (target.dataset.landing) state.landing = target.value;
+      if (target.dataset.kw) {
+        const id = target.dataset.kw;
+        state.selected = target.checked ? (state.selected.includes(id) ? state.selected : [...state.selected, id]) : state.selected.filter((item) => item !== id);
+      }
+      render();
+    });
+    document.getElementById("app").addEventListener("input", (event) => {
+      const target = event.target;
+      if (target.dataset.headline != null) state.headlines[Number(target.dataset.headline)] = target.value;
+      if (target.dataset.description != null) state.descriptions[Number(target.dataset.description)] = target.value;
+      if (target.dataset.bid != null) state.bidText = target.value;
+      if (target.dataset.headline != null || target.dataset.description != null || target.dataset.bid != null) render();
+    });
+    render();
+  </script>
+</body>
+</html>
